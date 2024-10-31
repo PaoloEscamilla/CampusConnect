@@ -6,6 +6,7 @@ export class Ubicacion extends Model {
   public nombre!: string;
   public descripcion!: string;
   public codigo!: string;
+  public tipo!: string; // Añadir el campo 'tipo'
 }
 
 Ubicacion.init(
@@ -26,6 +27,10 @@ Ubicacion.init(
     codigo: {
       type: DataTypes.STRING,
       allowNull: false
+    },
+    tipo: {
+      type: DataTypes.STRING,
+      allowNull: false // Este campo es requerido
     }
   },
   {

@@ -1,9 +1,9 @@
+// routers/pasosRutaRoutes.ts
 import { Router } from 'express';
 import { getPasosPorRuta } from '../controllers/pasosRutaController';
 
 const router = Router();
 
-// Ruta para obtener los pasos de una ruta específica
-router.get('/:ruta_id', getPasosPorRuta);
+router.get('/:rutaId/pasos', getPasosPorRuta);
 
 export default router;

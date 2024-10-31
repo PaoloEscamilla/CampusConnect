@@ -1,108 +1,107 @@
-// Obtener referencias a los elementos del DOM
-const origenSelect = document.getElementById('origen');
-const destinoSelect = document.getElementById('destino');
-const rutasDiv = document.getElementById('rutas');
-const pasosDiv = document.getElementById('pasos');
-
-// Cargar ubicaciones (origen y destino) desde la API
-async function cargarUbicaciones() {
-    try {
-        const res = await fetch('/ubicaciones');
-        const ubicaciones = await res.json();
-
-        origenSelect.innerHTML = '<option value="">Selecciona un origen</option>';
-        destinoSelect.innerHTML = '<option value="">Selecciona un destino</option>';
-
-        ubicaciones.forEach((ubicacion) => {
-            const optionOrigen = document.createElement('option');
-            optionOrigen.value = ubicacion.codigo;
-            optionOrigen.textContent = ubicacion.nombre;
-            origenSelect.appendChild(optionOrigen);
-
-            const optionDestino = document.createElement('option');
-            optionDestino.value = ubicacion.codigo;
-            optionDestino.textContent = ubicacion.nombre;
-            destinoSelect.appendChild(optionDestino);
-        });
-    } catch (error) {
-        console.error('Error al cargar ubicaciones:', error);
-    }
-}
-
-// Cargar rutas cuando se seleccionan origen y destino
-async function cargarRutas() {
-    const origen = origenSelect.value;
-    const destino = destinoSelect.value;
-
-    if (!origen || !destino) {
-        rutasDiv.innerHTML = '<p>Por favor selecciona origen y destino.</p>';
-        return;
-    }
-
-    try {
-        const res = await fetch(`/rutas/destino/${destino}`);
-        const rutas = await res.json();
-
-        rutasDiv.innerHTML = ''; // Limpiar rutas anteriores
-
-        if (rutas.length > 0) {
-            rutas.forEach((ruta) => {
-                const rutaCard = document.createElement('div');
-                rutaCard.innerHTML = `
-                    <p><strong>Duración:</strong> ${ruta.duracion}</p>
-                    <p><strong>Distancia:</strong> ${ruta.distancia}</p>
-                    <button class="ver-pasos" data-id="${ruta.id}">Ver Pasos</button>
-                `;
-                rutasDiv.appendChild(rutaCard);
-            });
-        } else {
-            rutasDiv.innerHTML = '<p>No se encontraron rutas.</p>';
+document.addEventListener('DOMContentLoaded', () => {
+    const origenSelect = document.getElementById('origen');
+    const destinoSelect = document.getElementById('destino');
+    const buscarButton = document.getElementById('buscar');
+    const rutasContainer = document.getElementById('rutas');
+    const pasosContainer = document.getElementById('pasos');
+  
+    // Cargar opciones de ubicaciones
+    const cargarUbicaciones = async () => {
+      try {
+        const response = await fetch('/ubicaciones');
+        if (!response.ok) {
+          throw new Error('Error al cargar ubicaciones');
         }
-
-        // Asignar eventos a los botones "Ver Pasos"
-        asignarEventosVerPasos();
-    } catch (error) {
-        console.error('Error al cargar las rutas:', error);
-        rutasDiv.innerHTML = '<p>Error al cargar las rutas.</p>';
-    }
-}
-
-// Asignar manejador de eventos a los botones "Ver Pasos"
-function asignarEventosVerPasos() {
-    const botonesVerPasos = document.querySelectorAll('.ver-pasos');
-    botonesVerPasos.forEach((boton) => {
-        boton.addEventListener('click', async () => {
-            const rutaId = boton.getAttribute('data-id');
-            try {
-                const resPasos = await fetch(`/pasos/${rutaId}`);
-                const pasos = await resPasos.json(); // Obtener el array de pasos
-
-                pasosDiv.innerHTML = ''; // Limpiar los pasos anteriores
-
-                if (pasos.length > 0) {
-                    console.log('Pasos obtenidos:', pasos); // Verificar en la consola si llegan todos los pasos
-
-                    pasos.forEach((paso) => {
-                        const pasoCard = document.createElement('div');
-                        pasoCard.innerHTML = `
-                            <p><strong>${paso.secuencia}.</strong> ${paso.instruccion}</p>
-                            <img src="${paso.imagen_url}" alt="Imagen del paso" style="width: 100px; height: auto;">
-                        `;
-                        pasosDiv.appendChild(pasoCard);
-                    });
-                } else {
-                    pasosDiv.innerHTML = '<p>No se encontraron pasos para esta ruta.</p>';
-                }
-            } catch (error) {
-                console.error('Error al cargar los pasos:', error);
-                pasosDiv.innerHTML = '<p>Error al cargar los pasos.</p>';
-            }
+        const ubicaciones = await response.json();
+  
+        console.log('Ubicaciones cargadas:', ubicaciones);
+  
+        ubicaciones.forEach(ubicacion => {
+          console.log('Procesando ubicación:', ubicacion);
+          const option = document.createElement('option');
+          option.value = ubicacion.id;
+          option.textContent = ubicacion.nombre;
+  
+          // Filtrar según el tipo de ubicación
+          if (ubicacion.tipo === 'entrada') {
+            origenSelect.appendChild(option);
+          } else if (ubicacion.tipo === 'edificio') {
+            destinoSelect.appendChild(option);
+          }
         });
+      } catch (error) {
+        console.error('Error al cargar ubicaciones:', error);
+      }
+    };
+  
+    cargarUbicaciones();
+  
+    // Buscar rutas
+    buscarButton.addEventListener('click', async () => {
+      const origenId = parseInt(origenSelect.value);
+      const destinoId = parseInt(destinoSelect.value);
+  
+      if (!origenId || !destinoId) {
+        alert('Por favor selecciona un origen y un destino.');
+        return;
+      }
+  
+      try {
+        const response = await fetch(`/rutas/filtrar?origen_id=${origenId}&destino_id=${destinoId}`);
+        if (!response.ok) {
+          throw new Error('No se encontraron rutas.');
+        }
+        const rutas = await response.json();
+        mostrarRutas(rutas);
+      } catch (error) {
+        rutasContainer.innerHTML = '<p>No se encontraron rutas.</p>';
+        pasosContainer.innerHTML = '';
+        console.error('Error al obtener rutas:', error);
+      }
     });
-}
-
-// Inicializar eventos
-document.getElementById('buscar').addEventListener('click', cargarRutas);
-
-// Cargar las ubicaciones al cargar la página
-cargarUbicaciones();
+  
+    // Mostrar rutas en el contenedor
+    const mostrarRutas = (rutas) => {
+      rutasContainer.innerHTML = '';
+      pasosContainer.innerHTML = '';
+  
+      rutas.forEach(ruta => {
+        const rutaDiv = document.createElement('div');
+        rutaDiv.className = 'ruta';
+        rutaDiv.innerHTML = `
+          <h3>Ruta desde ${ruta.origen_id} hacia ${ruta.destino_id}</h3>
+          <img src="${ruta.imagen_url}" alt="Referencia visual">
+          <p>Duración: ${ruta.duracion} minutos</p>
+          <p>Distancia: ${ruta.distancia} metros</p>
+          <button onclick="cargarPasos(${ruta.id})">Ver pasos</button>
+        `;
+        rutasContainer.appendChild(rutaDiv);
+      });
+    };
+  
+    // Cargar los pasos de una ruta
+    window.cargarPasos = async (rutaId) => {
+      try {
+        const response = await fetch(`/rutas/conPasos/${rutaId}`);
+        if (!response.ok) {
+          throw new Error('Error al obtener pasos de la ruta');
+        }
+        const { pasos } = await response.json();
+  
+        pasosContainer.innerHTML = '';
+        pasos.forEach(paso => {
+          const pasoDiv = document.createElement('div');
+          pasoDiv.className = 'paso';
+          pasoDiv.innerHTML = `
+            <p>Instrucción: ${paso.instruccion}</p>
+            <p>Secuencia: ${paso.secuencia}</p>
+          `;
+          pasosContainer.appendChild(pasoDiv);
+        });
+      } catch (error) {
+        pasosContainer.innerHTML = '<p>Error al obtener pasos de la ruta.</p>';
+        console.error('Error al obtener pasos:', error);
+      }
+    };
+  });
+  

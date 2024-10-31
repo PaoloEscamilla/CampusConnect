@@ -6,6 +6,7 @@ export class PasoRuta extends Model {
   public ruta_id!: number;
   public secuencia!: number;
   public instruccion!: string;
+  public imagen_url?: string;
 }
 
 PasoRuta.init({
@@ -25,6 +26,10 @@ PasoRuta.init({
   instruccion: {
     type: DataTypes.STRING,
     allowNull: false,
+  },
+  imagen_url: {
+    type: DataTypes.STRING, // URL de la imagen de referencia
+    allowNull: true,
   },
 }, {
   sequelize,
