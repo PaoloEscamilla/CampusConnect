@@ -1,13 +1,11 @@
 import { Model, DataTypes } from 'sequelize';
-import sequelize from './index';
+import sequelize from '../../config/dbConfig';
 
 export class Ruta extends Model {
   public id!: number;
+  //public nombre!: string;  // Comentado ya que no existe en la tabla
   public origen_id!: number;
   public destino_id!: number;
-  public imagen_url!: string;
-  public duracion!: number;
-  public distancia!: number;
 }
 
 Ruta.init(
@@ -15,32 +13,27 @@ Ruta.init(
     id: {
       type: DataTypes.INTEGER,
       autoIncrement: true,
-      primaryKey: true
+      primaryKey: true,
     },
     origen_id: {
       type: DataTypes.INTEGER,
-      allowNull: false
+      allowNull: false,
     },
     destino_id: {
       type: DataTypes.INTEGER,
-      allowNull: false
+      allowNull: false,
     },
-    imagen_url: {
-      type: DataTypes.STRING,
-      allowNull: true
-    },
-    duracion: {
-      type: DataTypes.INTEGER,
-      allowNull: false
-    },
-    distancia: {
-      type: DataTypes.INTEGER,
-      allowNull: false
-    }
+    // nombre: {
+    //   type: DataTypes.STRING,
+    //   allowNull: false,
+    // },  // Comentado ya que no existe en la tabla
   },
   {
     sequelize,
+    modelName: 'Ruta',
     tableName: 'rutas',
-    timestamps: false // Desactiva createdAt y updatedAt
+    timestamps: false,
   }
 );
+
+export default Ruta;

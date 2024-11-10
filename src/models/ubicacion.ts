@@ -1,12 +1,12 @@
 import { Model, DataTypes } from 'sequelize';
-import sequelize from './index';
+import sequelize from '../../config/dbConfig';
 
 export class Ubicacion extends Model {
   public id!: number;
   public nombre!: string;
   public descripcion!: string;
   public codigo!: string;
-  public tipo!: string; // Añadir el campo 'tipo'
+  public tipo!: string;
 }
 
 Ubicacion.init(
@@ -14,28 +14,30 @@ Ubicacion.init(
     id: {
       type: DataTypes.INTEGER,
       autoIncrement: true,
-      primaryKey: true
+      primaryKey: true,
     },
     nombre: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
     },
     descripcion: {
       type: DataTypes.STRING,
-      allowNull: true
+      allowNull: true,
     },
     codigo: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
     },
     tipo: {
       type: DataTypes.STRING,
-      allowNull: false // Este campo es requerido
-    }
+      allowNull: false,
+    },
   },
   {
     sequelize,
     tableName: 'ubicaciones',
-    timestamps: false // Desactiva createdAt y updatedAt
+    timestamps: false,
   }
 );
+
+export default Ubicacion;

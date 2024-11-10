@@ -2,13 +2,16 @@ import { Request, Response } from 'express';
 import { Ubicacion } from '../models/ubicacion';
 
 // Obtener todas las ubicaciones
+// Ejemplo de respuesta de ubicaciones en el backend
 export const getUbicaciones = async (req: Request, res: Response) => {
   try {
-    const ubicaciones = await Ubicacion.findAll();
+    const ubicaciones = await Ubicacion.findAll({
+      attributes: ['id', 'nombre', 'descripcion', 'tipo'], // Incluye la descripción
+    });
     res.status(200).json(ubicaciones);
   } catch (error) {
     console.error('Error al obtener ubicaciones:', error);
-    res.status(500).json({ message: 'Error al obtener ubicaciones', error });
+    res.status(500).json({ message: 'Error al obtener ubicaciones' });
   }
 };
 

@@ -1,17 +1,29 @@
-import { Sequelize } from 'sequelize';
-import dotenv from 'dotenv';
+import Ruta from './ruta';
+import PasoRuta from './pasoRuta';
+import Ubicacion from './ubicacion';
 
-dotenv.config();
+// Definir las relaciones entre los modelos
+Ruta.hasMany(PasoRuta, {
+  sourceKey: 'id',
+  foreignKey: 'ruta_id',
+  as: 'pasosRuta',
+});
 
-const sequelize = new Sequelize(
-  process.env.DB_NAME!,
-  process.env.DB_USER!,
-  process.env.DB_PASSWORD!,
-  {
-    host: process.env.DB_HOST,
-    dialect: 'postgres',
-    port: Number(process.env.DB_PORT),
-  }
-);
+PasoRuta.belongsTo(Ruta, {
+  foreignKey: 'ruta_id',
+  as: 'rutaRelacion',
+});
 
-export default sequelize;
+// Relación entre Ruta y Ubicacion (ubicación de destino)
+Ruta.belongsTo(Ubicacion, {
+  foreignKey: 'destino_id',
+  as: 'ubicacionDestino',
+});
+
+// Relación entre Ruta y Ubicacion (ubicación de origen)
+Ruta.belongsTo(Ubicacion, {
+  foreignKey: 'origen_id',
+  as: 'ubicacionOrigen',
+});
+
+export { Ruta, PasoRuta, Ubicacion };
