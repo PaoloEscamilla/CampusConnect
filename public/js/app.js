@@ -21,7 +21,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const option = document.createElement('option');
         option.value = ubicacion.id;
 
-        // Filtrar según el tipo de ubicación y ajustar el texto mostrado
         if (ubicacion.tipo === 'entrada') {
           option.textContent = ubicacion.nombre; // Solo el nombre para las entradas
           origenSelect.appendChild(option);
@@ -54,6 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
         throw new Error(errorData.message || 'No se encontraron rutas.');
       }
       const rutas = await response.json();
+      console.log('Rutas obtenidas del backend:', rutas); // Log para verificar las rutas obtenidas
       mostrarRutas(rutas);
     } catch (error) {
       rutasContainer.innerHTML = '<p>No se encontraron rutas.</p>';
@@ -66,28 +66,28 @@ document.addEventListener('DOMContentLoaded', () => {
   const mostrarRutas = (rutas) => {
     rutasContainer.innerHTML = '';
     pasosContainer.innerHTML = '';
-  
+
     if (rutas.length === 0) {
       rutasContainer.innerHTML = '<p>No se encontraron rutas.</p>';
       return;
     }
-  
+
     rutas.forEach(ruta => {
-      const destinoNombre = ruta.ubicacionDestino.descripcion || ruta.ubicacionDestino.nombre;
-      const origenNombre = ruta.ubicacionOrigen.descripcion || ruta.ubicacionOrigen.nombre;
+      const destinoNombre = ruta.ubicacionDestino ? (ruta.ubicacionDestino.descripcion || ruta.ubicacionDestino.nombre) : 'Destino desconocido';
+      const origenNombre = ruta.ubicacionOrigen ? (ruta.ubicacionOrigen.descripcion || ruta.ubicacionOrigen.nombre) : 'Origen desconocido';
+
+      console.log(`Origen: ${origenNombre}, Destino: ${destinoNombre}`); // Log para verificar origen y destino
+
       const rutaDiv = document.createElement('div');
       rutaDiv.className = 'ruta';
       rutaDiv.innerHTML = `
         <h3>Ruta desde ${origenNombre} hacia ${destinoNombre}</h3>
-        <img src="${ruta.imagen_url}" alt="Referencia visual">
-        <p>Duración: ${ruta.duracion || 'No especificada'} minutos</p>
-        <p>Distancia: ${ruta.distancia || 'No especificada'} metros</p>
-        <button onclick="cargarPasos(${ruta.id})">Ver pasos</button>
+        <img src="${ruta.imagen_url || 'default-image-url.jpg'}" alt="Referencia visual" style="max-width: 100%; height: auto;">
+        <button class="ver-pasos-button" onclick="cargarPasos(${ruta.id})">Ver pasos</button>
       `;
       rutasContainer.appendChild(rutaDiv);
-    });    
+    });
   };
-  
 
   // Cargar los pasos de una ruta
   window.cargarPasos = async (rutaId) => {
@@ -97,17 +97,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const errorData = await response.json();
         throw new Error(errorData.message || 'Error al obtener pasos de la ruta');
       }
-      const rutaData = await response.json(); // Obtener datos completos de la ruta
-    
-      console.log('Datos de la ruta con pasos:', rutaData); // Log para verificar los datos
+      const rutaData = await response.json();
+      console.log('Datos de la ruta con pasos:', rutaData);
 
-      // Revisar si los pasos existen en la respuesta
       if (!rutaData.pasosRuta || rutaData.pasosRuta.length === 0) {
         pasosContainer.innerHTML = '<p>No hay pasos disponibles para esta ruta.</p>';
         return;
       }
 
-      // Limpiar y agregar los pasos al contenedor
       pasosContainer.innerHTML = '';
       rutaData.pasosRuta.forEach(paso => {
         const pasoDiv = document.createElement('div');
@@ -115,7 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
         pasoDiv.innerHTML = `
           <p>Secuencia: ${paso.secuencia}</p>
           <p>Instrucción: ${paso.instruccion}</p>
-          <img src="${paso.imagen_url}" alt="Imagen de paso" style="max-width: 100px;">
+          <img src="${paso.imagen_url || 'default-step-image.jpg'}" alt="Imagen de paso" style="max-width: 100px; height: auto;">
         `;
         pasosContainer.appendChild(pasoDiv);
       });
@@ -125,4 +122,3 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 });
-

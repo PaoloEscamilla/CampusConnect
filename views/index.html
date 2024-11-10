@@ -4,30 +4,141 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CampusConnect</title>
+    <link rel="icon" href="/img/logo.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
+    <!-- Carrusel con fondo y texto superpuesto -->
     <header>
-        <h1>CampusConnect</h1>
-        <p>Encuentra tu ruta en el campus</p>
+        <div id="campusCarousel" class="carousel slide" data-ride="carousel">
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <img src="/img/university1.jpg" class="d-block w-100" alt="Universidad Imagen 1">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h1>CampusConnect</h1>
+                        <p>Encuentra tu ruta en el campus</p>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <img src="/img/university2.jpg" class="d-block w-100" alt="Universidad Imagen 2">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h1>CampusConnect</h1>
+                        <p>Encuentra tu ruta en el campus</p>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <img src="/img/university3.jpg" class="d-block w-100" alt="Universidad Imagen 3">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h1>CampusConnect</h1>
+                        <p>Encuentra tu ruta en el campus</p>
+                    </div>
+                </div>
+            </div>
+            <a class="carousel-control-prev" href="#campusCarousel" role="button" data-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="sr-only">Anterior</span>
+            </a>
+            <a class="carousel-control-next" href="#campusCarousel" role="button" data-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="sr-only">Siguiente</span>
+            </a>
+        </div>
     </header>
-    <main>
-        <div>
-            <label for="origen">Selecciona el origen:</label>
-            <select id="origen"></select>
+
+    <!-- Main content -->
+    <main class="container mt-4">
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="origen" class="form-label">Selecciona el origen:</label>
+                <select id="origen" class="form-control"></select>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="destino" class="form-label">Selecciona el destino:</label>
+                <select id="destino" class="form-control"></select>
+            </div>
         </div>
-        <div>
-            <label for="destino">Selecciona el destino:</label>
-            <select id="destino"></select>
+        <div class="text-center mb-4">
+            <button id="buscar" class="btn btn-primary btn-lg animated-button">Buscar</button>
         </div>
-        <button id="buscar">Buscar</button>
-        <div id="rutas">
+        <div id="rutas" class="rutas-container">
             <!-- Aquí se mostrarán las rutas -->
         </div>
-        <div id="pasos-container" class="pasos-container">
+        <div id="pasos-container" class="pasos-container mt-4">
             <!-- Aquí se mostrarán los pasos de la ruta con imágenes de referencia -->
         </div>
     </main>
+
+    <!-- Scripts de Bootstrap y animaciones -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/js/app.js"></script>
+
+    <!-- Estilos adicionales -->
+    <style>
+        /* Ajuste de altura del carrusel */
+        #campusCarousel {
+            height: 50vh;
+        }
+        #campusCarousel .carousel-item img {
+            height: 50vh;
+            object-fit: cover;
+        }
+        /* Estilo para el texto del carrusel */
+        #campusCarousel .carousel-caption h1 {
+            font-size: 3rem;
+            font-weight: bold;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+        }
+        #campusCarousel .carousel-caption p {
+            font-size: 1.5rem;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+        }
+        /* Estilo y animación para el botón */
+        .animated-button {
+            position: relative;
+            overflow: hidden;
+            transition: color 0.4s;
+        }
+        .animated-button:after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 300%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: all 0.4s;
+            transform: translateX(-50%) scaleY(0) rotate(45deg);
+        }
+        .animated-button:hover:after {
+            transform: translateX(-50%) scaleY(1) rotate(45deg);
+        }
+        .animated-button:hover {
+            color: #fff;
+            background-color: #5c83ad;
+        }
+        /* Estilos para los pasos en gris */
+        .paso {
+            background-color: #f8f9fa; /* Color gris claro */
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+        /* Estilo especial para el botón "Ver pasos" */
+        .ver-pasos-button {
+            background: linear-gradient(45deg, #214a88, #09123c);
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-weight: bold;
+            transition: background 0.3s ease;
+        }
+        .ver-pasos-button:hover {
+            background: linear-gradient(45deg, #214a88, #1e307e);
+        }
+    </style>
 </body>
 </html>
